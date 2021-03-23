@@ -22,9 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#define ARM_MATH_CM4
-#include "arm_math.h"
-#include "arm_const_structs.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,30 +63,16 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t adcbuf[buflen];
-float32_t testOutput2[1024];
-float32_t testMag2[512],value[1024],Frequency,maxValue;
-float32_t delF=8000/1024;//Fs/N
-uint32_t fftSize = 1024,maxIndex;
-uint32_t ifftFlag = 0;
-uint32_t doBitReverse = 1;
-//void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
-//{
-//  /* Prevent unused argument(s) compilation warning */
-//  UNUSED(hadc);
-//  HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_13);
-//}
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(hadc);
+  HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_13);
+}
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
  /* Prevent unused argument(s) compilation warning */
  UNUSED(hadc);
- for(int i=0;i<1024;i++)
-	 value[i]=adcbuf[i];
- arm_rfft_fast_instance_f32 S2;
- arm_rfft_fast_init_f32	(&S2,1024);
- arm_rfft_fast_f32	(&S2,value,testOutput2,ifftFlag);
- arm_cmplx_mag_f32(testOutput2, testMag2, fftSize);
- arm_max_f32(testMag2+1, 512, &maxValue, &maxIndex);
- Frequency=delF*(maxIndex+1);
  HAL_GPIO_TogglePin(GPIOD,GPIO_PIN_13);
 }
 /* USER CODE END 0 */
